@@ -3,26 +3,25 @@ class Planta:
         self.name = name
         self.height = height
         self.age = age
+    def grow(self):
+        self.height += 1
 
-def ft_age():
-    rose.height += 1
-    rose.age += 1
-    cactus.height += 1
-    cactus.age += 1
+    def age_one_day(self):
+        self.age += 1
 
-def ft_get_info(day):
-    print("=== Day", day, "===")
-    print(rose.name, ": ", rose.height, "cm, ", rose.age, " days old", sep = "")
-    print(cactus.name, ": ", cactus.height, "cm, ", cactus.age, " days old", sep = "")
-    if (day == 7):
-        print("Groth this week: +", day - 1, "cm", sep = "")
+    def get_info(self):
+        print(self.name, ": ", self.height, "cm, ", self.age, " days old", sep = "")
 
 if __name__ == "__main__":
-    i = int(1)
+    i = int(0)
+
     rose = Planta("Rose", 25, 30)
-    cactus = Planta("Cactus", 12, 18)
-    ft_get_info(i)
-    while (i < 7):
-        ft_age()
+    print("=== Day 1 ===")
+    rose.get_info()
+    while (i < 6):
+        rose.grow()
+        rose.age_one_day()
         i += 1
-    ft_get_info(i)
+    print("=== Day 7 ===")
+    rose.get_info()
+    print("Growth this week: +", i,"cm", sep = "")
