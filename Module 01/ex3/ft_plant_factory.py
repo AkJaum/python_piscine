@@ -1,22 +1,32 @@
-class Planta:
+class Plant:
     def __init__(self, name, height, age):
         self.name = name
         self.height = height
         self.age = age
+        print(
+            "Created: ", self.name, " (", self.height,
+            "cm ", self.age, " days)", sep=""
+        )
 
-    def creation_log(self):   
-        print("Created: ", self.name, " (", self.height, "cm ", self.age, " days)", sep = "")
+
+def ft_plant_factory():
+    plants_data = [
+        ("Rose", 25, 30),
+        ("Oak", 200, 365),
+        ("Cactus", 5, 90),
+        ("Sunflower", 80, 45),
+        ("Fern", 15, 120)
+    ]
+    plants = []
+    print("=== Plant Factory Output ===")
+    for i in range(len(plants_data)):
+        name = plants_data[i][0]
+        height = plants_data[i][1]
+        age = plants_data[i][2]
+        plant = Plant(name, height, age)
+        plants.append(plant)
+    print("\nTotal plants created:", len(plants))
+
 
 if __name__ == "__main__":
-    print("=== Plant Factory Output ===")
-    rose = Planta("Rose", 25, 30)
-    oak = Planta("Oak", 200, 365)
-    cactus = Planta("Cactus", 5, 90)
-    sunflower = Planta("Sunflower", 80, 45)
-    fern = Planta("Fern", 15, 120)
-    rose.creation_log()
-    oak.creation_log()
-    cactus.creation_log()
-    sunflower.creation_log()
-    fern.creation_log()
-    print("\nTotal plants created: 5")
+    ft_plant_factory()
