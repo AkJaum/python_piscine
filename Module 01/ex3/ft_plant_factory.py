@@ -3,10 +3,7 @@ class Plant:
         self.name = name
         self.height = height
         self.age = age
-        print(
-            "Created: ", self.name, " (", self.height,
-            "cm ", self.age, " days)", sep=""
-        )
+        print(f"Created: {self.name} ({self.height}cm, {self.age} days)")
 
 
 def ft_plant_factory():
@@ -17,15 +14,13 @@ def ft_plant_factory():
         ("Sunflower", 80, 45),
         ("Fern", 15, 120)
     ]
-    plants = []
     print("=== Plant Factory Output ===")
     for i in range(len(plants_data)):
         name = plants_data[i][0]
         height = plants_data[i][1]
         age = plants_data[i][2]
-        plant = Plant(name, height, age)
-        plants.append(plant)
-    print("\nTotal plants created:", len(plants))
+        Plant(name, height, age)
+    print("\nTotal plants created:", len(plants_data))
 
 
 if __name__ == "__main__":

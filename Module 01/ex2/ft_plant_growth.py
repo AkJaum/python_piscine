@@ -1,4 +1,4 @@
-class Planta:
+class Plant:
     def __init__(self, name, height, age):
         self.name = name
         self.height = height
@@ -11,21 +11,16 @@ class Planta:
         self.age += 1
 
     def get_info(self):
-        print(
-            self.name, ": ", self.height, "cm, ",
-            self.age, " days old", sep=""
-        )
+        print(f"{self.name}: {self.height}cm, {self.age} days old")
 
 
 if __name__ == "__main__":
-    i = int(0)
-    rose = Planta("Rose", 25, 30)
+    rose = Plant("Rose", 25, 30)
     print("=== Day 1 ===")
     rose.get_info()
-    while (i < 6):
+    for _ in range(6):
         rose.grow()
         rose.age_one_day()
-        i += 1
     print("=== Day 7 ===")
     rose.get_info()
-    print("Growth this week: +", i, "cm", sep="")
+    print("Growth this week: +", 6, "cm", sep="")

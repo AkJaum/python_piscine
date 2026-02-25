@@ -17,10 +17,10 @@ class Flower(Plant):
         print(self.name, "is blooming beautifully!\n")
 
     def display(self):
-        print(self.name, "(Flower):",
-              self.height, "cm,",
-              self.age, "days,",
-              self.color, "color")
+        print(self.name, " (Flower): ",
+              self.height, "cm, ",
+              self.age, " days, ",
+              self.color, " color", sep="")
         self.bloom()
 
 
@@ -31,13 +31,13 @@ class Tree(Plant):
 
     def produce_shade(self):
         shade_area = self.height // 2
-        print(self.name, "provides",shade_area, "square meters of shade\n")
+        print(self.name, "provides", shade_area, "square meters of shade\n")
 
     def display(self):
-        print(self.name, "(Tree):",
-              self.height, "cm,",
-              self.age, "days,",
-              self.trunk_diameter, "cm diameter")
+        print(self.name, " (Tree): ",
+              self.height, "cm, ",
+              self.age, "days, ",
+              self.trunk_diameter, " cm diameter", sep="")
         self.produce_shade()
 
 
@@ -48,10 +48,10 @@ class Vegetable(Plant):
         self.nutritional_value = nutritional_value
 
     def display(self):
-        print(self.name, "(Vegetable):",
-              self.height, "cm,",
-              self.age, "days,",
-              self.harvest_season, "harvest")
+        print(self.name, " (Vegetable): ",
+              self.height, "cm, ",
+              self.age, " days, ",
+              self.harvest_season, " harvest", sep="")
         self.nutrition_info()
 
     def nutrition_info(self):
@@ -63,10 +63,8 @@ if __name__ == "__main__":
     print("=== Garden Plant Types ===\n")
 
     rose = Flower("Rose", 25, 30, "red")
-
     oak = Tree("Oak", 500, 1825, 50)
-
-    tomato = Vegetable("Tomato", 80, 90,"summer", "vitamin C")
+    tomato = Vegetable("Tomato", 80, 90, "summer", "vitamin C")
 
     plants = [rose, oak, tomato]
 
