@@ -1,6 +1,7 @@
 import math
 
-def parse_coords(coord_str):
+
+def parse_coords(coord_str: str) -> tuple:
     coords = coord_str.split(",")
     try:
         x = int(coords[0])
@@ -10,17 +11,20 @@ def parse_coords(coord_str):
         return pos
     except ValueError as Error:
         print("Error parsing coordinates:", Error)
-        print(f"Error details - Type: {type(Error).__name__}, Args: {Error.args}\n")
+        print(
+            f"Error details - Type: {type(Error).__name__}, "
+            f"Args: {Error.args}\n"
+        )
     return None
 
 
-def create_pos(x, y, z):
+def create_pos(x: int, y: int, z: int) -> tuple:
     pos = (x, y, z)
     print("Position created:", pos)
     return pos
 
 
-def calculate_distance(src, dest):
+def calculate_distance(src: tuple, dest: tuple) -> float:
     x1, y1, z1 = src
     x2, y2, z2 = dest
     distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2)
@@ -33,12 +37,12 @@ if __name__ == "__main__":
     player = create_pos(10, 20, 5)
     calculate_distance(origin, player)
     coord_str = "3,4,0"
-    print(f'Parinsg coordinates: "{coord_str}"')
+    print(f'Parsing coordinates: "{coord_str}"')
     coord = parse_coords(coord_str)
     print(f"Parsed position: {coord}")
     if coord is not None:
         calculate_distance(origin, coord)
-    print(f'Parsing invalid coordniates: "abc,def,ghi"')
+    print('Parsing invalid coordniates: "abc,def,ghi"')
     parse_coords("abc,def,ghi")
     print("Unpacking demonstration:")
     x, y, z = coord

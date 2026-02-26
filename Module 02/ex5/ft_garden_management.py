@@ -1,22 +1,29 @@
 class GardenError(Exception):
-    def __init__(self, message="GardenError"):
+    def __init__(self, message="GardenError") -> None:
         super().__init__(message)
+
 
 class PlantError(GardenError):
-    def __init__(self, message="PlantError"):
+    def __init__(self, message="PlantError") -> None:
         super().__init__(message)
 
+
 class Planta():
-    def __init__(self, name, water_level, sunlight_hours):
+    def __init__(
+        self, name: str, water_level: int, sunlight_hours: int
+    ) -> None:
         self.name = name
         self.water_level = water_level
         self.sunlight_hours = sunlight_hours
+
 
 class GardenManager():
     def __init__(self):
         self.plants = []
 
-    def create_plant(self, name, water_level, sunlight_hours):
+    def create_plant(
+        self, name: str, water_level: int, sunlight_hours: int
+    ) -> None:
         try:
             if not name:
                 raise PlantError("Plant name cannot be empty!")
@@ -27,12 +34,12 @@ class GardenManager():
         except PlantError as Error:
             print("Error adding plant:", Error)
 
-    def water_plants(self, plants):
+    def water_plants(self, plants: list) -> None:
         try:
             print("Opening watering system")
             for plant in plants:
                 if plant.name is None or plant.name == "":
-                    print("Cannor water None - invalid plant!")
+                    print("Cannot water None - invalid plant!")
                 if not isinstance(plant.name, str):
                     raise PlantError("Invalid plant type!")
                 print("Watering", plant.name, "- success")
@@ -40,41 +47,41 @@ class GardenManager():
             print("Error watering plant:", Error)
         finally:
             print("Closing watering system (cleanup)")
-    
-    def check_plant_health(self, plants):
+
+    def check_plant_health(self, plants: list) -> None:
         try:
             for plant in plants:
                 if plant.name == "" or plant.name is None:
                     raise PlantError("Plant name cannot be empty!")
                 elif plant.water_level > 10:
                     raise PlantError(
-                        f"{plant.name}: Water level 
-                        {plant.water_level} is too high (max 10)"
+                        f"{plant.name}: Water level "
+                        f"{plant.water_level} is too high (max 10)"
                     )
                 elif plant.water_level < 1:
                     raise PlantError(
-                        f"{plant.name}: Water level 
-                        {plant.water_level} is too low (min 1)"
+                        f"{plant.name}: Water level "
+                        f"{plant.water_level} is too low (min 1)"
                     )
                 elif plant.sunlight_hours > 12:
                     raise PlantError(
-                        f"{plant.name}: Sunlight hours 
-                        {plant.sunlight_hours} is too hight (max 12)"
+                        f"{plant.name}: Sunlight hours "
+                        f"{plant.sunlight_hours} is too high (max 12)"
                     )
                 elif plant.sunlight_hours < 2:
                     raise PlantError(
-                        f"{plant.name}: Sunlight hours 
-                        {plant.sunlight_hours} is too low (min 2)"
+                        f"{plant.name}: Sunlight hours "
+                        f"{plant.sunlight_hours} is too low (min 2)"
                     )
                 else:
                     print(
-                        f"{plant.name}: healthy (water: 
-                        {plant.water_level}, sun: {plant.sunlight_hours})"
+                        f"{plant.name}: healthy (water: "
+                        f"{plant.water_level}, sun: {plant.sunlight_hours})"
                     )
         except PlantError as Error:
             print("Error checking", Error)
 
-    def error_recovery(self, water_level):
+    def error_recovery(self, water_level: int) -> None:
         try:
             if water_level < 20:
                 raise PlantError("Not enough water in tank")

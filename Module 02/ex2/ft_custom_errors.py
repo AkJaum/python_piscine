@@ -1,27 +1,31 @@
 class GardenError(Exception):
-    def __init__(self, message="GardenError"):
+    def __init__(self, message="GardenError") -> None:
         super().__init__(message)
+
 
 class PlantError(GardenError):
-    def __init__(self, message="PlantError"):
+    def __init__(self, message="PlantError") -> None:
         super().__init__(message)
+
 
 class WaterError(GardenError):
-    def __init__(self, message="WaterError"):
+    def __init__(self, message="WaterError") -> None:
         super().__init__(message)
 
-def test_plant_error(last_watering):
+
+def test_plant_error(last_watering: int) -> None:
     if last_watering > 2:
         raise PlantError("Plants neeed water!")
     elif last_watering < 0:
         raise PlantError("Invalid value, must be > 0")
     print("Plants are fine.\n")
 
-def test_water_error(temp):
+
+def test_water_error(temp: int) -> None:
     if temp < 0 or temp > 40:
         raise WaterError("Water temperature must be between 0 and 40 degrees.")
     print("Water temperature is valid:", temp, "°C\n")
-    
+
 
 def test_custom_errors():
     print("=== Custom Garden Errors Demo ===\n")
@@ -45,5 +49,7 @@ def test_custom_errors():
     except GardenError as e:
         print("Caught a garden error:", e)
     print("\nAll custom error types work correctly!")
+
+
 if __name__ == "__main__":
     test_custom_errors()

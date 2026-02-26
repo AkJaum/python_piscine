@@ -1,12 +1,14 @@
 class GardenError(Exception):
-    def __init__(self, message="GardenError"):
+    def __init__(self, message="GardenError") -> None:
         super().__init__(message)
+
 
 class PlantError(GardenError):
-    def __init__(self, message="PlantError"):
+    def __init__(self, message="PlantError") -> None:
         super().__init__(message)
 
-def water_plants(plant_list):
+
+def water_plants(plant_list: list) -> None:
     print("Opening watering system")
     try:
         for plant in plant_list:
@@ -22,6 +24,7 @@ def water_plants(plant_list):
     finally:
         print("Closing watering system (cleanup)")
 
+
 def test_watering_system():
     print("=== Garden Watering System ===\n")
     print("Testing normal watering...")
@@ -35,6 +38,7 @@ def test_watering_system():
         water_plants(["tomato", None, "carrots"])
     finally:
         print("\nCleanup always happens, even with errors!")
+
 
 if __name__ == "__main__":
     test_watering_system()

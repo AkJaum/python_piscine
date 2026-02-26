@@ -9,5 +9,5 @@ if __name__ == "__main__":
         print(fd.read())
         fd.close()
         print("\nData recovery complete. Storage unit disconnected.")
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         print("Error: Storage vault not found")

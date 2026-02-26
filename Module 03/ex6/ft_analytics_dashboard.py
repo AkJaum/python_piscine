@@ -1,4 +1,4 @@
-def main():
+def main() -> None:
     print("=== Game Analytics Dashboard ===")
     players = [
         {
@@ -70,9 +70,11 @@ def main():
     average_score = sum([p["score"] for p in players]) / len(players)
     print("Average score:", average_score)
     top_player = max(players, key=lambda p: p["score"])
-    print("Top performer:",
-          top_player["name"],
-          f"({top_player['score']} points, {len(top_player['achievements'])} achievements)")
+    print(
+        f"Top performer: {top_player['name']} ({top_player['score']} "
+        f"points, {len(top_player['achievements'])} achievements)"
+    )
+
 
 if __name__ == "__main__":
     main()

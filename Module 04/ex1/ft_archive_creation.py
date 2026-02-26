@@ -5,7 +5,7 @@ if __name__ == "__main__":
         "[ENTRY 003] Archived by Data Archivist trainee\n"
     ]
     print("=== CYBER ARCHIVES - PRESERVATION SYSTEM ===\n")
-    
+
     print("Initializing new storage unit: new_discovery.txt")
     file = open("new_discovery.txt", "w")
     print("\nInscribing preservation data...")
