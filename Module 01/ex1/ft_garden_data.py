@@ -1,5 +1,5 @@
 class Plant:
-    def __init__(self, name, height, age):
+    def __init__(self, name: str, height: int, age: int) -> None:
         self.name = name
         self.height = height
         self.age = age
@@ -8,10 +8,10 @@ class Plant:
 if __name__ == "__main__":
     print("=== Garden Plant Registry ===")
 
-    rose = Plant("Rose", "25cm", 30)
-    sunflower = Plant("Sunflower", "80cm", 45)
-    cactus = Plant("Cactus", "15cm", 120)
+    rose = Plant("Rose", 25, 30)
+    sunflower = Plant("Sunflower", 80, 45)
+    cactus = Plant("Cactus", 15, 120)
 
-    print(f"{rose.name}: {rose.height}, {rose.age} days old")
-    print(f"{sunflower.name}: {sunflower.height}, {sunflower.age} days old")
-    print(f"{cactus.name}: {cactus.height}, {cactus.age} days old")
+    print(f"{rose.name}: {rose.height}cm, {rose.age} days old")
+    print(f"{sunflower.name}: {sunflower.height}cm, {sunflower.age} days old")
+    print(f"{cactus.name}: {cactus.height}cm, {cactus.age} days old")
