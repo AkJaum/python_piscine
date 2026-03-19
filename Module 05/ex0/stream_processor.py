@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 from abc import ABC, abstractmethod
 
 class DataProcessor(ABC):
@@ -78,17 +78,17 @@ class LogProcessor(DataProcessor):
 
 if __name__ == "__main__":
     print("=== CODE NEXUS - DATA PROCESSOR FOUNDATION ===\n")
-    data_type: list[str] = [
+    data_type: List[str] = [
         "Numeric",
         "Text",
         "Log"
     ]
-    processors: list[DataProcessor] = [
+    processors: List[DataProcessor] = [
         NumericProcessor(),
         TextProcessor(),
         LogProcessor()
     ]
-    data_samples = [
+    data_samples: List[any] = [
         [1, 2, 3, 4, 5],
         "Hello Nexus World",
         "ERROR: Connection timeout"
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         except Exception as Error:
             print("Error:", Error)
 
-    data_samples = [
+    data_samples: List[any] = [
         [1, 2, 3],
         "Hello Nexus ",
         "INFO: System ready"
@@ -122,6 +122,6 @@ if __name__ == "__main__":
         data = data_samples[index]
         if processor.validate(data):
             result_as_str = processor.process(data)
-            print(f"Result: {index+1}: {result_as_str}")
+            print(f"Result {index+1}: {result_as_str}")
         index += 1
     print("\nFoundation systems online. Nexus ready for advanced streams.")
