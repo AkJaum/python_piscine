@@ -1,10 +1,11 @@
 from typing import Any, List
 from abc import ABC, abstractmethod
 
+
 class DataProcessor(ABC):
     def __init__(self) -> None:
         self.data = []
-        
+
     def format_output(self, result: str) -> str:
         return f"Output: {result}\n"
 
@@ -15,6 +16,7 @@ class DataProcessor(ABC):
     @abstractmethod
     def validate(self, data: Any) -> bool:
         pass
+
 
 class NumericProcessor(DataProcessor):
     def __init__(self) -> None:
@@ -28,14 +30,15 @@ class NumericProcessor(DataProcessor):
         avg = total/length
         result = f"Processed {length} numeric values, sum={total}, avg={avg}"
         return result
-        
+
     def validate(self, data: Any) -> bool:
         try:
             for num in data:
                 float(num)
-        except:
+        except ValueError:
             return False
         return True
+
 
 class TextProcessor(DataProcessor):
     def __init__(self) -> None:
@@ -52,10 +55,11 @@ class TextProcessor(DataProcessor):
             return False
         return True
 
+
 class LogProcessor(DataProcessor):
     def __init__(self) -> None:
         super().__init__()
-        
+
     def process(self, data):
         level, message = data.split(":", 1)
         level = level.strip().upper()
@@ -68,13 +72,14 @@ class LogProcessor(DataProcessor):
             level = f"[INFO] {level} level detected:"
         result = f"{level} {message}"
         return result
-    
+
     def validate(self, data: Any) -> bool:
         if not isinstance(data, str):
             return False
         if ":" not in data:
             return False
         return True
+
 
 if __name__ == "__main__":
     print("=== CODE NEXUS - DATA PROCESSOR FOUNDATION ===\n")
