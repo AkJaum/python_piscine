@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Tuple, Dict
 from abc import ABC, abstractmethod
 
 
@@ -9,6 +9,7 @@ class DataStream():
     def register_processor(self, proc: "DataProcessor") -> None:
         self.processor.append(proc)
 
+    '''Return the processor of the given type found in self.processor'''
     def _get_processor(self, proc_type: type) -> "DataProcessor | None":
         for proc in self.processor:
             if isinstance(proc, proc_type):
@@ -16,69 +17,52 @@ class DataStream():
         return None
 
     def process_stream(self, stream: list[Any]) -> None:
-        if isinstance(stream, list) and self.processor is not None:
-            for item in stream:
-                try:
-                    if isinstance(item, str):
-                        proc = self._get_processor(TextProcessor)
+        if not isinstance(stream, list) or not self.processor:
+            return
+        processors = [
+            (
+                TextProcessor,
+                lambda x: isinstance(x, str) or (
+                    isinstance(x, list) and all(isinstance(i, str) for i in x)
+                ),
+            ),
+            (
+                NumericProcessor,
+                lambda x: isinstance(x, (int, float)) or (
+                    isinstance(x, list)
+                    and all(isinstance(i, (int, float)) for i in x)
+                ),
+            ),
+            (
+                LogProcessor,
+                lambda x: isinstance(x, Dict) or (
+                    isinstance(x, list) and all(isinstance(i, Dict) for i in x)
+                ),
+            ),
+        ]
+        for item in stream:
+            try:
+                for processor, check in processors:
+                    if check(item):
+                        proc = self._get_processor(processor)
                         if proc is None:
                             raise Exception(
                                 f"Can't process element in stream: {item}"
                             )
-                        proc.ingest(item)
-                    elif isinstance(item, (int, float)):
-                        proc = self._get_processor(NumericProcessor)
-                        if proc is None:
-                            raise Exception(
-                                f"Can't process element in stream: {item}"
-                            )
-                        proc.ingest([item])
-                    elif (
-                        isinstance(item, list)
-                        and all(
-                            isinstance(value, (int, float))
-                            for value in item
-                        )
-                    ):
-                        proc = self._get_processor(NumericProcessor)
-                        if proc is None:
-                            raise Exception(
-                                f"Can't process element in stream: {item}"
-                            )
-                        proc.ingest(item)
-                    elif (
-                        isinstance(item, list)
-                        and all(isinstance(value, str) for value in item)
-                    ):
-                        proc = self._get_processor(TextProcessor)
-                        if proc is None:
-                            raise Exception(
-                                f"Can't process element in stream: {item}"
-                            )
-                        proc.ingest(item)
-                    elif isinstance(item, dict):
-                        proc = self._get_processor(LogProcessor)
-                        if proc is None:
-                            raise Exception(
-                                f"Can't process element in stream: {item}"
-                            )
-                        proc.ingest([item])
-                    elif (
-                        isinstance(item, list)
-                        and all(isinstance(value, dict) for value in item)
-                    ):
-                        proc = self._get_processor(LogProcessor)
-                        if proc is None:
-                            raise Exception(
-                                f"Can't process element in stream: {item}"
-                            )
-                        proc.ingest(item)
-                    else:
-                        raise Exception(
-                            f"Can't process element in stream: {item}"
-                        )
-                except Exception as e:
-                    print(f"DataStream error - {e}")
+                        if (
+                            processor in [NumericProcessor, LogProcessor]
+                            and not isinstance(item, list)
+                        ):
+                            proc.ingest([item])
+                        else:
+                            proc.ingest(item)
+                        break
+                else:
+                    raise Exception(
+                        f"Can't process element in stream: {item}"
+                    )
+            except Exception as e:
+                print(f"DataStream error - {e}")
 
     def print_processors_stat(self) -> None:
         print("== DataStream statistics ==")
@@ -94,11 +78,11 @@ class DataStream():
 
 class DataProcessor(ABC):
     def __init__(self) -> None:
-        self.data: List[tuple[int, str]] = []
+        self.data: List[Tuple[int, str]] = []
         self._rank: int = 0
         self.total_processed: int = 0
 
-    def output(self) -> tuple[int, str]:
+    def output(self) -> Tuple[int, str]:
         if not self.data:
             raise Exception("No processed data available")
         return self.data.pop(0)
@@ -176,11 +160,11 @@ class LogProcessor(DataProcessor):
 
     def ingest(self, data: Any) -> None:
         index: int = 0
-        if isinstance(data, dict):
+        if isinstance(data, Dict):
             pass
         elif (
             isinstance(data, list)
-            and all(isinstance(item, dict) for item in data)
+            and all(isinstance(item, Dict) for item in data)
         ):
             pass
         else:
@@ -193,10 +177,10 @@ class LogProcessor(DataProcessor):
             self._store_result(result)
 
     def validate(self, data: Any) -> bool:
-        if isinstance(data, dict):
+        if isinstance(data, Dict):
             return True
         elif isinstance(data, list):
-            return all(isinstance(item, dict) for item in data)
+            return all(isinstance(item, Dict) for item in data)
         return False
 
 

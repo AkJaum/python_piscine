@@ -62,7 +62,7 @@ class TextProcessor(DataProcessor):
             pass
         else:
             raise Exception("Data must be a string or a list of strings")
-        print(f"Extracting {len(data)} value...")
+        print(f"Extracting {len(data)} values...")
         for i in range(len(data)):
             if isinstance(data, str):
                 text = data
