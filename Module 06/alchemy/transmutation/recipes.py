@@ -1,4 +1,4 @@
-import alchemy.potions
+import alchemy
 from elements import create_fire
 
 

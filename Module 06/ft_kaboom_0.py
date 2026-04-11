@@ -1,4 +1,4 @@
-import alchemy.grimoire as grimoire
+from alchemy.grimoire.light_spellbook import light_spell_record
 
 
 if __name__ == "__main__":
@@ -6,5 +6,5 @@ if __name__ == "__main__":
     print("Using grimoire module directly")
     print(
         f"Testing record light spell: "
-        f"{grimoire.light_spell_record('Fantasy', 'Earth, wind, fire')}"
+        f"{light_spell_record('Fantasy', 'Earth, Wind & Fire')}"
     )

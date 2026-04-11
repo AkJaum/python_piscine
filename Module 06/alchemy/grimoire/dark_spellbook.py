@@ -1,6 +1,9 @@
 from .dark_validator import validate_ingredients
 
 
+dark_spell_allowed_ingredients = ["bats", "frogs", "arsenic", "eyeball"]
+
+
 def dark_spell_record(spell_name: str, ingredients: str) -> str:
     result = validate_ingredients(ingredients)
     for item in result.split(" "):
