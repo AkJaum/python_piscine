@@ -64,7 +64,7 @@ class DataStream():
             except Exception as e:
                 print(f"DataStream error - {e}")
 
-    def print_processors_stat(self) -> None:
+    def print_processors_stats(self) -> None:
         print("== DataStream statistics ==")
         if not self.processor:
             print("No processors found, no data\n")
@@ -106,8 +106,10 @@ class NumericProcessor(DataProcessor):
         super().__init__()
 
     def ingest(self, data: Any) -> None:
-        if not isinstance(data, list):
+        if self.validate(data) is False:
             raise Exception("Improper numeric data")
+        if not isinstance(data, list):
+            data = [data]
         for i in range(len(data)):
             num = data[i]
             if not isinstance(num, (int, float)):
@@ -127,17 +129,9 @@ class TextProcessor(DataProcessor):
         super().__init__()
 
     def ingest(self, data: Any) -> None:
-        list_flag: int = 0
-        if isinstance(data, str):
-            pass
-        elif (
-            isinstance(data, list)
-            and all(isinstance(item, str) for item in data)
-        ):
-            list_flag += 1
-        else:
-            raise Exception("Data must be a string or a list of strings")
-        if list_flag == 0:
+        if self.validate(data) is False:
+            raise Exception("Improper text data")
+        if not isinstance(data, list):
             data = [data]
         for i in range(len(data)):
             if isinstance(data, str):
@@ -160,15 +154,10 @@ class LogProcessor(DataProcessor):
 
     def ingest(self, data: Any) -> None:
         index: int = 0
-        if isinstance(data, Dict):
-            pass
-        elif (
-            isinstance(data, list)
-            and all(isinstance(item, Dict) for item in data)
-        ):
-            pass
-        else:
-            raise Exception("Data must be a dict or a list of dicts")
+        if self.validate(data) is False:
+            raise Exception("Improper text data")
+        if not isinstance(data, list):
+            data = [data]
         for item in data:
             level = item.get("log_level")
             message = item.get("log_message")
@@ -204,31 +193,43 @@ def main() -> None:
     ]
     print("=== Code Nexus - Data Stream ===\n")
     print("Initialize Data Stream...")
-    ds.print_processors_stat()
+    ds.print_processors_stats()
     print("Registering Numeric Processor\n")
     ds.register_processor(NumericProcessor())
     print(f"Send first batch of data on stream: {data_batch}")
     ds.process_stream(data_batch)
-    ds.print_processors_stat()
+    ds.print_processors_stats()
 
     print("\nRegistering other data processors")
     ds.register_processor(TextProcessor())
     ds.register_processor(LogProcessor())
     print("Send the same batch again")
     ds.process_stream(data_batch)
-    ds.print_processors_stat()
+    ds.print_processors_stats()
 
     print(
         "\nConsume some elements from the data processors: "
         "Numeric 3, Text 2, Log 1"
         )
     for _ in range(3):
-        ds._get_processor(NumericProcessor).output()
+        proc = ds._get_processor(NumericProcessor)
+        if proc is not None:
+            proc.output()
+        else:
+            print("NumericProcessor not found.")
     for _ in range(2):
-        ds._get_processor(TextProcessor).output()
+        proc = ds._get_processor(TextProcessor)
+        if proc is not None:
+            proc.output()
+        else:
+            print("TextProcessor not found.")
     for _ in range(1):
-        ds._get_processor(LogProcessor).output()
-    ds.print_processors_stat()
+        proc = ds._get_processor(LogProcessor)
+        if proc is not None:
+            proc.output()
+        else:
+            print("LogProcessor not found.")
+    ds.print_processors_stats()
 
 
 if __name__ == "__main__":

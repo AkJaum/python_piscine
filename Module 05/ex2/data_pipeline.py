@@ -74,8 +74,8 @@ class DataStream():
             ),
             (
                 LogProcessor,
-                lambda x: isinstance(x, Dict) or (
-                    isinstance(x, list) and all(isinstance(i, Dict) for i in x)
+                lambda x: isinstance(x, dict) or (
+                    isinstance(x, list) and all(isinstance(i, dict) for i in x)
                 ),
             ),
         ]
@@ -103,7 +103,7 @@ class DataStream():
             except Exception as e:
                 print(f"DataStream error - {e}")
 
-    def print_processors_stat(self) -> None:
+    def print_processors_stats(self) -> None:
         print("== DataStream statistics ==")
         if not self.processor:
             print("No processors found, no data\n")
@@ -157,8 +157,10 @@ class NumericProcessor(DataProcessor):
         super().__init__()
 
     def ingest(self, data: Any) -> None:
-        if not isinstance(data, list):
+        if self.validate(data) is False:
             raise Exception("Improper numeric data")
+        if not isinstance(data, list):
+            data = [data]
         for i in range(len(data)):
             num = data[i]
             if not isinstance(num, (int, float)):
@@ -178,17 +180,9 @@ class TextProcessor(DataProcessor):
         super().__init__()
 
     def ingest(self, data: Any) -> None:
-        list_flag: int = 0
-        if isinstance(data, str):
-            pass
-        elif (
-            isinstance(data, list)
-            and all(isinstance(item, str) for item in data)
-        ):
-            list_flag += 1
-        else:
-            raise Exception("Data must be a string or a list of strings")
-        if list_flag == 0:
+        if self.validate(data) is False:
+            raise Exception("Improper text data")
+        if not isinstance(data, list):
             data = [data]
         for i in range(len(data)):
             if isinstance(data, str):
@@ -211,15 +205,10 @@ class LogProcessor(DataProcessor):
 
     def ingest(self, data: Any) -> None:
         index: int = 0
-        if isinstance(data, Dict):
-            pass
-        elif (
-            isinstance(data, list)
-            and all(isinstance(item, Dict) for item in data)
-        ):
-            pass
-        else:
-            raise Exception("Data must be a dict or a list of dicts")
+        if self.validate(data) is False:
+            raise Exception("Improper log data")
+        if not isinstance(data, list):
+            data = [data]
         for item in data:
             level = item.get("log_level")
             message = item.get("log_message")
@@ -228,10 +217,10 @@ class LogProcessor(DataProcessor):
             self._store_result(result)
 
     def validate(self, data: Any) -> bool:
-        if isinstance(data, Dict):
+        if isinstance(data, dict):
             return True
         elif isinstance(data, list):
-            return all(isinstance(item, Dict) for item in data)
+            return all(isinstance(item, dict) for item in data)
         return False
 
 
@@ -272,7 +261,7 @@ if __name__ == "__main__":
     print("=== Code Nexus - Data Pipeline ===\n")
     print("Initialize Data Stream...\n")
     ds = DataStream()
-    ds.print_processors_stat()
+    ds.print_processors_stats()
     print("Registering processors...\n")
     ds.register_processor(NumericProcessor())
     ds.register_processor(TextProcessor())
@@ -280,15 +269,15 @@ if __name__ == "__main__":
     print("Processors registered successfully.")
     print(f"Send first batch of data on stream: {data_batch_1}\n")
     ds.process_stream(data_batch_1)
-    ds.print_processors_stat()
+    ds.print_processors_stats()
     print("\nSend 3 processed data from each processor to a CSV plugin")
     ds.output_pipeline(3, CSVExportPlugin())
     print()
-    ds.print_processors_stat()
+    ds.print_processors_stats()
     print(f"\nSend another batch of data: {data_batch_2}\n")
     ds.process_stream(data_batch_2)
-    ds.print_processors_stat()
+    ds.print_processors_stats()
     print("\nSend 5 processed data from each processor to a JSON plugin:")
     ds.output_pipeline(5, JSONExportPlugin())
     print()
-    ds.print_processors_stat()
+    ds.print_processors_stats()

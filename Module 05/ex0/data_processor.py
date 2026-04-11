@@ -1,4 +1,4 @@
-from typing import Any, List, Dict
+from typing import Any, List
 from abc import ABC, abstractmethod
 
 
@@ -30,17 +30,16 @@ class NumericProcessor(DataProcessor):
         super().__init__()
 
     def ingest(self, data: Any) -> None:
-        if not isinstance(data, list):
+        if self.validate(data) is False:
             raise Exception("Improper numeric data")
+        if not isinstance(data, list):
+            data = [data]
         print(f"Extracting {len(data)} values...")
         for i in range(len(data)):
             num = data[i]
-            if not isinstance(num, (int, float)):
-                raise Exception("Data must be a list of numbers")
             self._store_result(f"Numeric value {i}: {num}")
             print(self.output()[1])
 
-    '''Arrumar o validate de todas as classes'''
     def validate(self, data: Any) -> bool:
         if isinstance(data, (int, float)):
             return True
@@ -54,15 +53,10 @@ class TextProcessor(DataProcessor):
         super().__init__()
 
     def ingest(self, data: Any) -> None:
-        if isinstance(data, str):
-            pass
-        elif (
-            isinstance(data, list)
-            and all(isinstance(item, str) for item in data)
-        ):
-            pass
-        else:
-            raise Exception("Data must be a string or a list of strings")
+        if self.validate(data) is False:
+            raise Exception("Improper text data")
+        if not isinstance(data, list):
+            data = [data]
         print(f"Extracting {len(data)} values...")
         for i in range(len(data)):
             if isinstance(data, str):
@@ -75,7 +69,7 @@ class TextProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
         if isinstance(data, str):
             return True
-        elif isinstance(data, list):
+        if isinstance(data, list):
             return all(isinstance(item, str) for item in data)
         return False
 
@@ -86,15 +80,10 @@ class LogProcessor(DataProcessor):
 
     def ingest(self, data: Any) -> None:
         index: int = 0
-        if isinstance(data, Dict):
-            pass
-        elif (
-            isinstance(data, list)
-            and all(isinstance(item, Dict) for item in data)
-        ):
-            pass
-        else:
-            raise Exception("Data must be a dict or a list of dicts")
+        if self.validate(data) is False:
+            raise Exception("Improper log data")
+        if not isinstance(data, list):
+            data = [data]
         print(f"Extracting {len(data)} values...")
         for item in data:
             level = item.get("log_level")
@@ -105,10 +94,10 @@ class LogProcessor(DataProcessor):
             print(self.output()[1])
 
     def validate(self, data: Any) -> bool:
-        if isinstance(data, Dict):
+        if isinstance(data, dict):
             return True
-        elif isinstance(data, list):
-            return all(isinstance(item, Dict) for item in data)
+        if isinstance(data, list):
+            return all(isinstance(item, dict) for item in data)
         return False
 
 
@@ -162,6 +151,10 @@ def main() -> None:
         LogProcessor().ingest(data_samples[2])
     except Exception as e:
         print(f"Error processing log data: {e}\n")
+    try:
+        NumericProcessor().ingest(42)
+    except Exception as e:
+        print(f"Error processing numeric data 42: {e}\n")
 
 
 if __name__ == "__main__":
