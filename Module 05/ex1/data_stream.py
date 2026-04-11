@@ -45,7 +45,7 @@ class DataStream():
                 for processor, check in processors:
                     if check(item):
                         proc = self._get_processor(processor)
-                        if proc is None:
+                        if proc is None or proc.validate(item) is False:
                             raise Exception(
                                 f"Can't process element in stream: {item}"
                             )
@@ -203,7 +203,7 @@ def main() -> None:
         ["Hi", "five"],
     ]
     print("=== Code Nexus - Data Stream ===\n")
-    print("Initialize Data Stream...\n")
+    print("Initialize Data Stream...")
     ds.print_processors_stat()
     print("Registering Numeric Processor\n")
     ds.register_processor(NumericProcessor())

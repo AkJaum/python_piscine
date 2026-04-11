@@ -9,15 +9,35 @@ class ExportPlugin(Protocol):
 
 class CSVExportPlugin:
     def process_output(self, data: List[Tuple[int, str]]) -> None:
+        data_output: List[str] = []
         print("Exporting data in CSV format:")
         for rank, result in data:
-            print(f"{rank}, {result}")
+            if any(
+                level in result
+                for level in ("WARNING", "INFO", "ERROR", "NOTICE")
+            ):
+                data_output.append(
+                    f"{result.split(': ')[1]}: {result.split(': ')[2]}"
+                )
+            else:
+                data_output.append(f"{result.split(': ')[1]}")
+        print(",".join(data_output))
 
 
 class JSONExportPlugin:
     def process_output(self, data: List[Tuple[int, str]]) -> None:
         print("Exporting data in JSON format:")
-        json_data = [{"rank": rank, "result": result} for rank, result in data]
+        json_data: Dict[str, str] = {}
+        for rank, result in data:
+            if any(
+                level in result
+                for level in ("WARNING", "INFO", "ERROR", "NOTICE")
+            ):
+                json_data[f"item_{rank}"] = (
+                    f"{result.split(': ')[1]}: {result.split(': ')[2]}"
+                )
+            else:
+                json_data[f"item_{rank}"] = result.split(": ")[1]
         print(json_data)
 
 
@@ -94,6 +114,7 @@ class DataStream():
                 f"items processed, remaining {len(proc.data)} on processor"
                 )
 
+    """Send nb processed data from each processor to the given plugin"""
     def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
         if not self.processor:
             print("No processors found, no data\n")
@@ -102,13 +123,14 @@ class DataStream():
         for proc in self.processor:
             for _ in range(min(nb, len(proc.data))):
                 output_data.append(proc.output())
-        plugin.process_output(output_data)
+            plugin.process_output(output_data)
+            output_data.clear()
 
 
 class DataProcessor(ABC):
     def __init__(self) -> None:
         self.data: List[Tuple[int, str]] = []
-        self._rank: int = 0
+        self._rank: int = -1
         self.total_processed: int = 0
 
     def output(self) -> Tuple[int, str]:
@@ -215,7 +237,7 @@ class LogProcessor(DataProcessor):
 
 if __name__ == "__main__":
     data_batch_1 = [
-        "Hello, World",
+        "Hello World",
         [3.14, -1, 2.71],
         [
             {
@@ -234,6 +256,19 @@ if __name__ == "__main__":
         42,
         ["Hi", "Five"],
     ]
+    data_batch_2 = [
+        21,
+        ["I love AI", "LLMs are wonderful", "Stay healthy"],
+        [
+            {"log_level": "ERROR", "log_message": "500 server crash"},
+            {
+                "log_level": "NOTICE",
+                "log_message": "Certificate expires in 10 days",
+            },
+        ],
+        [32, 42, 64, 84, 128, 168],
+        "World hello",
+    ]
     print("=== Code Nexus - Data Pipeline ===\n")
     print("Initialize Data Stream...\n")
     ds = DataStream()
@@ -244,3 +279,16 @@ if __name__ == "__main__":
     ds.register_processor(LogProcessor())
     print("Processors registered successfully.")
     print(f"Send first batch of data on stream: {data_batch_1}\n")
+    ds.process_stream(data_batch_1)
+    ds.print_processors_stat()
+    print("\nSend 3 processed data from each processor to a CSV plugin")
+    ds.output_pipeline(3, CSVExportPlugin())
+    print()
+    ds.print_processors_stat()
+    print(f"\nSend another batch of data: {data_batch_2}\n")
+    ds.process_stream(data_batch_2)
+    ds.print_processors_stat()
+    print("\nSend 5 processed data from each processor to a JSON plugin:")
+    ds.output_pipeline(5, JSONExportPlugin())
+    print()
+    ds.print_processors_stat()

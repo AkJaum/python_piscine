@@ -40,6 +40,7 @@ class NumericProcessor(DataProcessor):
             self._store_result(f"Numeric value {i}: {num}")
             print(self.output()[1])
 
+    '''Arrumar o validate de todas as classes'''
     def validate(self, data: Any) -> bool:
         if isinstance(data, (int, float)):
             return True
