@@ -1,0 +1,31 @@
+from ex1.factories import HealingFactory, TransformFactory
+
+if __name__ == "__main__":
+    healing_factory = HealingFactory()
+    transform_factory = TransformFactory()
+
+    grass_creature = healing_factory.create_base()
+    normal_creature = transform_factory.create_base()
+
+    print("Testing Creature with healing capability base:")
+    print(grass_creature.describe())
+    print(grass_creature.attack())
+    print(grass_creature.heal())
+    print(" evolved:")
+    grass_creature = healing_factory.create_evolved()
+    print(grass_creature.describe())
+    print(grass_creature.attack())
+    print(f"{grass_creature.heal()}\n")
+    print("Testing Creature with transform capability base:")
+    print(normal_creature.describe())
+    print(normal_creature.attack())
+    print(normal_creature.transform())
+    print(normal_creature.attack())
+    print(normal_creature.revert())
+    print(" evolved:")
+    normal_creature = transform_factory.create_evolved()
+    print(normal_creature.describe())
+    print(normal_creature.attack())
+    print(normal_creature.transform())
+    print(normal_creature.attack())
+    print(normal_creature.revert())
