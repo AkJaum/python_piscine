@@ -1,3 +1,4 @@
+from typing import Tuple, List
 from ex0.factories import AquaFactory, FlameFactory
 from ex1.factories import HealingFactory, TransformFactory
 from ex2.strategies import (
@@ -8,31 +9,31 @@ from ex2.strategies import (
 )
 
 
-def run_battle(left, right) -> None:
-    left_factory, left_strategy = left
-    right_factory, right_strategy = right
-    left_creature = left_factory.create_base()
-    right_creature = right_factory.create_base()
+def run_battle(creature_1: Tuple, creature_2: Tuple) -> None:
+    c1_factory, c1_strategy = creature_1
+    c2_factory, c2_strategy = creature_2
+    c1_creature = c1_factory.create_base()
+    c2_creature = c2_factory.create_base()
     print("\n* Battle *")
-    print(left_creature.describe())
+    print(c1_creature.describe())
     print(" vs.")
-    print(right_creature.describe())
+    print(c2_creature.describe())
     print(" now fight!")
 
-    for action in left_strategy.act(left_creature):
+    for action in c1_strategy.act(c1_creature):
         print(action)
-    for action in right_strategy.act(right_creature):
+    for action in c2_strategy.act(c2_creature):
         print(action)
 
 
-def tournament(opponents: list[tuple]) -> None:
+def tournament(opponents: List[Tuple]) -> None:
     print("*** Tournament ***")
     print(f"{len(opponents)} opponents involved")
 
-    for left_index in range(len(opponents)):
-        for right_index in range(left_index + 1, len(opponents)):
+    for creature_1 in range(len(opponents) - 1):
+        for creature_2 in range(creature_1 + 1, len(opponents)):
             try:
-                run_battle(opponents[left_index], opponents[right_index])
+                run_battle(opponents[creature_1], opponents[creature_2])
             except InvalidStrategyCreatureError as error:
                 print(f"Battle error, aborting tournament: {error}")
                 return

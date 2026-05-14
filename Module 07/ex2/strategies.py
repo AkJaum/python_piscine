@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from ._creatures import Creature
 
 
 class InvalidStrategyCreatureError(Exception):
@@ -7,24 +8,24 @@ class InvalidStrategyCreatureError(Exception):
 
 class BattleStrategy(ABC):
     @abstractmethod
-    def act(self, creature) -> list[str]:
+    def act(self, creature: Creature) -> list[str]:
         pass
 
     @abstractmethod
-    def is_valid(self, creature) -> bool:
+    def is_valid(self, creature: Creature) -> bool:
         pass
 
 
 class NormalStrategy(BattleStrategy):
-    def act(self, creature) -> list[str]:
+    def act(self, creature: Creature) -> list[str]:
         return [creature.attack()]
 
-    def is_valid(self, creature) -> bool:
+    def is_valid(self, creature: Creature) -> bool:
         return True
 
 
 class AggressiveStrategy(BattleStrategy):
-    def act(self, creature) -> list[str]:
+    def act(self, creature: Creature) -> list[str]:
         if self.is_valid(creature):
             return [
                 creature.transform(),
@@ -36,7 +37,7 @@ class AggressiveStrategy(BattleStrategy):
             f"'{creature.name}' for this aggressive strategy"
         )
 
-    def is_valid(self, creature) -> bool:
+    def is_valid(self, creature: Creature) -> bool:
         return (
             hasattr(creature, "transform")
             and hasattr(creature, "attack")
@@ -44,12 +45,8 @@ class AggressiveStrategy(BattleStrategy):
         )
 
 
-# Backward-compatible alias for typo present in older code.
-AgressiveStrategy = AggressiveStrategy
-
-
 class DefensiveStrategy(BattleStrategy):
-    def act(self, creature) -> list[str]:
+    def act(self, creature: Creature) -> list[str]:
         if self.is_valid(creature):
             return [creature.attack(), creature.heal()]
         raise InvalidStrategyCreatureError(
@@ -57,5 +54,5 @@ class DefensiveStrategy(BattleStrategy):
             f"'{creature.name}' for this defensive strategy"
         )
 
-    def is_valid(self, creature) -> bool:
+    def is_valid(self, creature: Creature) -> bool:
         return hasattr(creature, "attack") and hasattr(creature, "heal")
