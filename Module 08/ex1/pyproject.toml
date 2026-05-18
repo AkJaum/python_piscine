@@ -2,8 +2,8 @@
 name = "loading"
 version = "0.1.0"
 description = "Matrix loading exercise with pip and Poetry dependency management"
-authors = ["student <student@example.com>"]
-readme = "README.md"
+authors = ["jneris-d"]
+readme = "None"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
