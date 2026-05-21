@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ValidationError
 from typing import List
 from enum import Enum
 from datetime import datetime
@@ -40,21 +40,34 @@ class SpaceMission(BaseModel):
 
     @model_validator(mode='after')
     def check_leadership(self) -> 'SpaceMission':
-        if not any(member.rank in [Rank.CAPTAIN, Rank.COMMANDER] for member in self.crew):
-            raise ValueError("Mission must have at least one Commander or Captain")
+        if not any(
+            member.rank in [Rank.CAPTAIN, Rank.COMMANDER]
+            for member in self.crew
+        ):
+            raise ValueError(
+                "Mission must have at least one Commander or Captain"
+            )
         return self
 
     @model_validator(mode='after')
     def long_mission_validator(self) -> 'SpaceMission':
-        if self.duration_days > 365 and not any(member.years_experience > 5 for member in self.crew):
-            raise ValueError("Long missions must have at least one crew member with more than 5 years of experience")
+        if (
+            self.duration_days > 365 and
+            not any(member.years_experience > 5 for member in self.crew)
+        ):
+            raise ValueError(
+                "Long missions must have at least one crew member "
+                "with more than 5 years of experience"
+            )
         return self
 
     @model_validator(mode='after')
     def crew_members_validator(self) -> 'SpaceMission':
         for member in self.crew:
             if not member.is_active:
-                raise ValueError(f"Crew member {member.name} is not active")
+                raise ValueError(
+                    f"Crew member {member.name} is not active"
+                )
         return self
 
 
@@ -67,7 +80,10 @@ def print_mission_details(mission: SpaceMission):
     print(f"Crew size: {len(mission.crew)}")
     print("Crew members:")
     for member in mission.crew:
-        print(f"  - {member.name} ({member.rank.value}) - {member.specialization}")
+        print(
+            f"  - {member.name} ({member.rank.value}) - "
+            f"{member.specialization}"
+        )
 
 
 if __name__ == "__main__":
@@ -75,9 +91,18 @@ if __name__ == "__main__":
     print("=================================")
     try:
         crew_members = [
-            CrewMember(member_id="C001", name="Alice", rank=Rank.CAPTAIN, age=35, specialization="Pilot", years_experience=10),
-            CrewMember(member_id="C002", name="Bob", rank=Rank.OFFICER, age=30, specialization="Engineer", years_experience=5),
-            CrewMember(member_id="C003", name="Charlie", rank=Rank.LIEUTENANT, age=28, specialization="Scientist", years_experience=3)
+            CrewMember(
+                member_id="C001", name="Alice", rank=Rank.CAPTAIN, age=35,
+                specialization="Pilot", years_experience=10
+            ),
+            CrewMember(
+                member_id="C002", name="Bob", rank=Rank.OFFICER, age=30,
+                specialization="Engineer", years_experience=5
+            ),
+            CrewMember(
+                member_id="C003", name="Charlie", rank=Rank.LIEUTENANT, age=28,
+                specialization="Scientist", years_experience=3
+            )
         ]
 
         mission = SpaceMission(
@@ -91,16 +116,25 @@ if __name__ == "__main__":
         )
         print("Valid mission created:")
         print_mission_details(mission)
-    except ValueError as e:
+    except ValidationError as e:
         for err in e.errors():
             print(err['loc'], err['msg'])
     print("\n=================================")
     print("Expected validation error:")
     try:
         crew_members = [
-            CrewMember(member_id="C001", name="Alice", rank=Rank.CADET, age=35, specialization="Pilot", years_experience=10),
-            CrewMember(member_id="C002", name="Bob", rank=Rank.OFFICER, age=30, specialization="Engineer", years_experience=5),
-            CrewMember(member_id="C003", name="Charlie", rank=Rank.LIEUTENANT, age=28, specialization="Scientist", years_experience=3)
+            CrewMember(
+                member_id="C001", name="Alice", rank=Rank.CADET, age=35,
+                specialization="Pilot", years_experience=10
+            ),
+            CrewMember(
+                member_id="C002", name="Bob", rank=Rank.OFFICER, age=30,
+                specialization="Engineer", years_experience=5
+            ),
+            CrewMember(
+                member_id="C003", name="Charlie", rank=Rank.LIEUTENANT, age=28,
+                specialization="Scientist", years_experience=3
+            )
         ]
         mission = SpaceMission(
             mission_id="M2024_MARS",
@@ -111,6 +145,6 @@ if __name__ == "__main__":
             crew=crew_members,
             budget_millions=2500.0
         )
-    except ValueError as e:
+    except ValidationError as e:
         for err in e.errors():
             print(err['loc'], err['msg'])

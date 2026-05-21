@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 from typing import Optional
 from datetime import datetime
 
@@ -39,7 +39,7 @@ def main() -> None:
             notes="No issues reported."
         )
         print_station_data(station)
-    except Exception as e:
+    except ValidationError as e:
         for err in e.errors():
             print(err['loc'], err['msg'])
     print("\n========================================")
@@ -55,7 +55,7 @@ def main() -> None:
             is_operational=False
         )
         print_station_data(station)
-    except Exception as e:
+    except ValidationError as e:
         for err in e.errors():
             print(err['loc'], err['msg'])
 

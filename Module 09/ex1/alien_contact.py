@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ValidationError
 from typing import Optional
 from datetime import datetime
 from enum import Enum
@@ -36,8 +36,13 @@ class AlienContact(BaseModel):
 
     @model_validator(mode='after')
     def validate_telepathic_contact(self) -> "AlienContact":
-        if self.contact_type == ContactType.TELEPATHIC and self.witness_count < 3:
-            raise ValueError("Telepathic contact requires at least 3 witnesses")
+        if (
+            self.contact_type == ContactType.TELEPATHIC
+            and self.witness_count < 3
+        ):
+            raise ValueError(
+                "Telepathic contact requires at least 3 witnesses"
+            )
         return self
 
     @model_validator(mode='after')
@@ -76,7 +81,7 @@ if __name__ == "__main__":
             is_verified=True
         )
         print_contact(contact)
-    except ValueError as e:
+    except ValidationError as e:
         for err in e.errors():
             print(err['loc'], err['msg'])
     print("\n======================================")
@@ -94,6 +99,6 @@ if __name__ == "__main__":
             is_verified=True
         )
         print_contact(invalid_contact)
-    except ValueError as e:
+    except ValidationError as e:
         for err in e.errors():
             print(err['loc'], err['msg'])

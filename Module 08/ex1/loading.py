@@ -1,5 +1,4 @@
 import importlib
-import sys
 
 
 REQUIRED_PACKAGES = {
@@ -17,9 +16,8 @@ def get_package_version(module) -> str:
     return str(version)
 
 
-def check_dependencies() -> tuple[dict[str, object], list[str]]:
+def check_dependencies() -> list[str]:
     """Import dependencies lazily and report status without crashing."""
-    loaded = {}
     missing_required = []
 
     print("Checking dependencies:")
@@ -27,7 +25,6 @@ def check_dependencies() -> tuple[dict[str, object], list[str]]:
     for package_name, message in REQUIRED_PACKAGES.items():
         try:
             module = importlib.import_module(package_name)
-            loaded[package_name] = module
             print(
                 f"[OK] {package_name} ({get_package_version(module)})"
                 f" - {message}"
@@ -36,7 +33,7 @@ def check_dependencies() -> tuple[dict[str, object], list[str]]:
             missing_required.append(package_name)
             print(f"[MISSING] {package_name} - required for this program")
 
-    return loaded, missing_required
+    return missing_required
 
 
 def show_install_help(missing_required) -> None:
@@ -74,7 +71,8 @@ def analyze_matrix_data() -> None:
     average to smooth the signal. The DataFrame has three columns: 'cycle' for
     the index, 'signal' for the raw signal values, and 'moving_average' for the
     smoothed signal. The moving average is calculated using a rolling window of
-    20 data points, with a minimum of 1 period to avoid NaN values at the start.'''
+    20 data points, with a minimum of 1 period to avoid
+    NaN values at the start.'''
     frame = pd_module.DataFrame(
         {
             "cycle": matrix_index,
@@ -114,15 +112,16 @@ def analyze_matrix_data() -> None:
     print(f"Results saved to: {output_path}")
 
 
-def main() -> None:
+def main() -> int:
     print("LOADING STATUS: Loading programs...")
 
-    modules, missing_required = check_dependencies()
+    missing_required = check_dependencies()
     if missing_required:
         show_install_help(missing_required)
-        exit(1)
+        return 1
     analyze_matrix_data()
+    return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
