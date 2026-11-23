@@ -71,6 +71,7 @@ Working with Python virtual environments, package management, and external libra
 Using external libraries for data validation, working with datetime, and structured data modeling.
 
 **Key Concepts:** Pydantic, BaseModel, Field validation, datetime, optional fields
+
 ---
 
 ### **M10 - Functional Programming**
@@ -82,6 +83,7 @@ Master functional programming in Python: lambda expressions, higher-order functi
 - **ex2:** Closures and lexical scoping with nonlocal
 - **ex3:** functools (reduce, partial, lru_cache, singledispatch)
 - **ex4:** Decorators, decorator factories, @staticmethod, @functools.wraps
+
 ---
 
 ## Progression Summary
